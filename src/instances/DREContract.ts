@@ -31,9 +31,26 @@ export default class DREContract {
    * @param id Transaction ID of the interaction to check
    */
   public async getValidity(id: string) {
-    // TODO
-    const res = await this.#node.fetch<ContractValidity>("/validity");
+    const params = new URLSearchParams({
+      id,
+      contractId: this.#id
+    });
+    const res = await this.#node.fetch<ContractValidity>("/validity?" + params.toString());
 
     return res.validity;
+  }
+
+  /** 
+   * Schedule force synchronization of this contract
+   * on the DRE node
+   * 
+   * Note: This can't be called more frequent then every 10 seconds
+   */
+  public async sync() {
+    const params = new URLSearchParams({
+      id: this.#id
+    });
+
+    await this.#node.fetch("/sync?" + params.toString());
   }
 }

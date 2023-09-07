@@ -47,4 +47,11 @@ export default class DRENode {
   public async getErrors() {
     return await this.fetch<NodeErrors>("/cached");
   }
+
+  /**
+   * Get the list of blacklisted contracts on the DRE node
+   */
+  public async getBlacklist() {
+    return await this.fetch<NodeErrors>("/blacklist");
+  }
 }
