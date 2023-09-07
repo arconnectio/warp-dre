@@ -1,4 +1,4 @@
-import { NodeStatus } from "../types/node";
+import { CachedContracts, NodeErrors, NodeStatus } from "../types/node";
 
 export default class DRENode {
   #url: string;
@@ -12,6 +12,11 @@ export default class DRENode {
     this.#url = url;
   }
 
+  /** Get the URL of the active DRE node */
+  public getURL() {
+    return this.#url;
+  }
+
   /**
    * Fetch something from the DRE node
    * 
@@ -22,7 +27,24 @@ export default class DRENode {
     return await fetch(new URL(path, this.#url).href, config) as T;
   }
 
+  /**
+   * Get the current status of a DRE node
+   */
   public async getStatus() {
     return await this.fetch<NodeStatus>("/status");
+  }
+
+  /**
+   * Get the list of cached contracts by the DRE node
+   */
+  public async getCached() {
+    return await this.fetch<CachedContracts>("/cached");
+  }
+
+  /**
+   * Get all errors for all contracts cached in the DRE node
+   */
+  public async getErrors() {
+    return await this.fetch<NodeErrors>("/cached");
   }
 }
