@@ -12,3 +12,7 @@ export interface CachedContracts {
 export interface NodeErrors {
 
 }
+
+export interface TypesResponse<T = unknown> extends Response {
+  json(): Promise<T>;
+}

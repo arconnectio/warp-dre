@@ -1,4 +1,4 @@
-import { CachedContracts, NodeErrors, NodeStatus } from "../types/node";
+import { CachedContracts, NodeErrors, NodeStatus, TypesResponse } from "../types/node";
 
 export default class DRENode {
   #url: string;
@@ -23,35 +23,50 @@ export default class DRENode {
    * @param path Path of the request
    * @param config Fetch config
    */
-  public async fetch<T = unknown>(path: string, config?: RequestInit) {
-    return await fetch(new URL(path, this.#url).href, config) as T;
+  public async fetch<T = unknown>(path: string, config?: RequestInit): Promise<TypesResponse<T>> {
+    const res = await fetch(new URL(path, this.#url).href, config);
+
+    // throw error
+    if (res.status < 200 || res.status >= 300) {
+      throw new Error(res.statusText);
+    }
+
+    return res;
   }
 
   /**
    * Get the current status of a DRE node
    */
   public async getStatus() {
-    return await this.fetch<NodeStatus>("/status");
+    const res = await this.fetch<NodeStatus>("/status");
+
+    return await res.json();
   }
 
   /**
    * Get the list of cached contracts by the DRE node
    */
   public async getCached() {
-    return await this.fetch<CachedContracts>("/cached");
+    const res = await this.fetch<CachedContracts>("/cached");
+
+    return await res.json();
   }
 
   /**
    * Get all errors for all contracts cached in the DRE node
    */
   public async getErrors() {
-    return await this.fetch<NodeErrors>("/cached");
+    const res = await this.fetch<NodeErrors>("/cached");
+
+    return await res.json();
   }
 
   /**
    * Get the list of blacklisted contracts on the DRE node
    */
   public async getBlacklist() {
-    return await this.fetch<NodeErrors>("/blacklist");
+    const res = await this.fetch<NodeErrors>("/blacklist");
+
+    return await res.json();
   }
 }

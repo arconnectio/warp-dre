@@ -25,6 +25,24 @@ export default class DREContract {
   }
 
   /**
+   * Query the state of the contract
+   * 
+   * @param query [jsonpath-plus](https://npmjs.comjsonpath-plus) query
+   */
+  public async query<T = unknown[]>(query: string) {
+    const params = new URLSearchParams({
+      id: this.#id,
+      query
+    });
+    const res = await this.#node.fetch<{
+      result: T
+    }>("/contract?" + params.toString());
+    const data = await res.json();
+
+    return data.result;
+  }
+
+  /**
    * Get the validity of this contract, stored on
    * the DRE node
    * 
@@ -36,8 +54,9 @@ export default class DREContract {
       contractId: this.#id
     });
     const res = await this.#node.fetch<ContractValidity>("/validity?" + params.toString());
+    const data = await res.json();
 
-    return res.validity;
+    return data.validity;
   }
 
   /** 
