@@ -1,4 +1,5 @@
-import { ContractValidity } from "../types/contract";
+import { ContractState, ContractValidity, StateConfig } from "../types/contract";
+import { stringifyRecordValues } from "../utils";
 import { NODES } from "../nodes";
 import DRENode from "./DRENode";
 
@@ -29,14 +30,15 @@ export default class DREContract {
    * 
    * @param config Custom config for the state request
    */
-  public async getState(config?: StateConfig) {
+  public async getState<T = unknown>(config: StateConfig = {}) {
     const params = new URLSearchParams({
       id: this.#id,
-      query
+      // @ts-expect-error
+      ...stringifyRecordValues(config)
     });
-    const res = await this.#node.fetch<{
-      result: T
-    }>("/contract?" + params.toString());
+    const res = await this.#node.fetch<ContractState<T>>(
+      "/contract?" + params.toString()
+    );
 
     return await res.json();
   }
@@ -88,5 +90,20 @@ export default class DREContract {
     });
 
     await this.#node.fetch("/sync?" + params.toString());
+  }
+
+  /**
+   * Check if the contract state is accessible and
+   * not blacklisted from the current DRE node.
+   */
+  public async healthCheck() {
+    try {
+      // try to get the state
+      const res = await this.getState();
+
+      return res.status === "evaluated";
+    } catch {
+      return false;
+    }
   }
 }
