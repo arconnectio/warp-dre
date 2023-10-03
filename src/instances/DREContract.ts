@@ -114,10 +114,10 @@ export default class DREContract {
    * @param exclude Nodes to exclude from the search
    */
   public async findNode(nodelist: string[] = NODES, exclude: string[] = []) {
-    // exclude the current node
-    exclude.push(this.#node.getURL());
-
     for (let i = 0; i < nodelist.length; i++) {
+      // exclude
+      if (exclude.includes(nodelist[i])) continue;
+
       try {
         // init node
         const newNode = new DRENode(nodelist[i]);
