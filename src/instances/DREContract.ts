@@ -106,4 +106,22 @@ export default class DREContract {
       return false;
     }
   }
+
+  /**
+   * Find a new node for the 
+   * 
+   * @param nodelist List of nodes to search in
+   * @param exclude Nodes to exclude from the search
+   */
+  public async findNode(nodelist: string[] = NODES, exclude: string[] = []) {
+    // exclude the current node
+    exclude.push(this.#node.getURL());
+
+    for (let i = 0; i < nodelist.length; i++) {
+      // TODO: check if contract is accessible on the node
+      // if yes, set it as the active node and break
+    }
+
+    return this.#node.getURL();
+  }
 }
