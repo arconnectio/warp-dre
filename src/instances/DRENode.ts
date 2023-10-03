@@ -1,4 +1,4 @@
-import { CachedContracts, NodeErrors, NodeStatus, TypesResponse } from "../types/node";
+import { CachedContracts, NodeErrors, NodeStatus, TypesResponse, NodeBlacklist } from "../types/node";
 
 export default class DRENode {
   #url: string;
@@ -56,7 +56,7 @@ export default class DRENode {
    * Get all errors for all contracts cached in the DRE node
    */
   public async getErrors() {
-    const res = await this.fetch<NodeErrors>("/cached");
+    const res = await this.fetch<NodeErrors>("/errors");
 
     return await res.json();
   }
@@ -65,7 +65,7 @@ export default class DRENode {
    * Get the list of blacklisted contracts on the DRE node
    */
   public async getBlacklist() {
-    const res = await this.fetch<NodeErrors>("/blacklist");
+    const res = await this.fetch<NodeBlacklist>("/blacklist");
 
     return await res.json();
   }

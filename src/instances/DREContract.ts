@@ -25,6 +25,23 @@ export default class DREContract {
   }
 
   /**
+   * Fetch thhe contract state
+   * 
+   * @param config Custom config for the state request
+   */
+  public async getState(config?: StateConfig) {
+    const params = new URLSearchParams({
+      id: this.#id,
+      query
+    });
+    const res = await this.#node.fetch<{
+      result: T
+    }>("/contract?" + params.toString());
+
+    return await res.json();
+  }
+
+  /**
    * Query the state of the contract
    * 
    * @param query [jsonpath-plus](https://npmjs.comjsonpath-plus) query
