@@ -118,8 +118,24 @@ export default class DREContract {
     exclude.push(this.#node.getURL());
 
     for (let i = 0; i < nodelist.length; i++) {
-      // TODO: check if contract is accessible on the node
-      // if yes, set it as the active node and break
+      try {
+        // init node
+        const newNode = new DRENode(nodelist[i]);
+
+        // fetch state
+        const state = await (
+          await newNode.fetch<{
+            status: "blacklisted" | "evaluated"
+          }>(`/contract?id=${this.#id}`)
+        ).json();
+
+        // don't accept blacklisting nodes
+        if (state.status === "blacklisted") continue;
+
+        // update node
+        this.#node = newNode;
+        break;
+      } catch {}
     }
 
     return this.#node.getURL();
